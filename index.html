@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>투석 건강 길잡이 - 신장투석 환자와 보호자를 위한 맞춤 정보</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Noto Sans KR Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        teal: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            600: '#0d9488',
+                            700: '#0f766e',
+                            800: '#115e59',
+                        },
+                        medicalBlue: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            word-break: keep-all;
+        }
+        /* Dynamic Font Size Classes for Accessibility */
+        .font-normal-size { font-size: 100%; }
+        .font-large-size { font-size: 115%; }
+        .font-xlarge-size { font-size: 130%; }
+
+        .active-tab {
+            border-bottom: 4px solid #f59e0b;
+            color: #fef3c7 !important;
+            font-weight: 700;
+        }
+        .food-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .food-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="font-normal-size flex flex-col min-h-screen bg-slate-50 text-slate-800">
+
+    <!-- Header & Accessibility Bar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-3 sm:px-6 flex flex-wrap items-center justify-between gap-4">
+            <!-- Logo & Title -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchPage('home')">
+                <div class="w-12 h-12 bg-teal-600 rounded-2xl flex items-center justify-center text-white shadow-md">
+                    <i data-lucide="activity" class="w-7 h-7"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold text-teal-800 tracking-tight">투석 건강 길잡이</h1>
+                    <p class="text-xs sm:text-sm text-slate-500 font-medium">신장투석 환자와 가족을 위한 맞춤 안내서</p>
+                </div>
+            </div>
+
+            <!-- Font Size Adjuster for Seniors -->
+            <div class="flex items-center bg-slate-100 rounded-xl p-1.5 border border-slate-200">
+                <span class="text-xs font-bold text-slate-600 mr-2 ml-1 hidden sm:inline-flex items-center">
+                    <i data-lucide="type" class="w-4 h-4 mr-1"></i>글자 크기:
+                </span>
+                <button onclick="setFontSize('normal')" id="btn-font-normal" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-teal-700 text-white shadow-sm transition">보통</button>
+                <button onclick="setFontSize('large')" id="btn-font-large" class="px-3 py-1.5 text-xs font-bold rounded-lg text-slate-700 hover:bg-slate-200 transition">크게</button>
+                <button onclick="setFontSize('xlarge')" id="btn-font-xlarge" class="px-3 py-1.5 text-xs font-bold rounded-lg text-slate-700 hover:bg-slate-200 transition">아주 크게</button>
+            </div>
+        </div>
+
+        <!-- Main Navigation Bar -->
+        <nav class="bg-teal-800 text-white shadow-inner">
+            <div class="max-w-6xl mx-auto px-2 flex justify-between sm:justify-start overflow-x-auto text-sm sm:text-base font-semibold">
+                <button onclick="switchPage('home')" id="nav-home" class="py-3.5 px-4 sm:px-6 hover:bg-teal-700 transition flex items-center whitespace-nowrap active-tab border-b-4 border-amber-400 text-amber-300">
+                    <i data-lucide="home" class="w-5 h-5 mr-2"></i>1. 투석이란?
+                </button>
+                <button onclick="switchPage('process')" id="nav-process" class="py-3.5 px-4 sm:px-6 hover:bg-teal-700 transition flex items-center whitespace-nowrap border-b-4 border-transparent text-slate-100">
+                    <i data-lucide="rotate-cw" class="w-5 h-5 mr-2"></i>2. 투석 과정 보기
+                </button>
+                <button onclick="switchPage('food')" id="nav-food" class="py-3.5 px-4 sm:px-6 hover:bg-teal-700 transition flex items-center whitespace-nowrap border-b-4 border-transparent text-slate-100">
+                    <i data-lucide="utensils" class="w-5 h-5 mr-2"></i>3. 음식/영양 정보
+                </button>
+                <button onclick="switchPage('checklist')" id="nav-checklist" class="py-3.5 px-4 sm:px-6 hover:bg-teal-700 transition flex items-center whitespace-nowrap border-b-4 border-transparent text-slate-100">
+                    <i data-lucide="clipboard-check" class="w-5 h-5 mr-2"></i>4. 식습관 체크
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-6 sm:px-6">
+
+        <!-- 1. HOME PAGE -->
+        <section id="page-home" class="space-y-8">
+            <!-- Hero Section -->
+            <div class="bg-gradient-to-r from-teal-700 to-medicalBlue-700 rounded-3xl p-6 sm:p-10 text-white shadow-xl relative overflow-hidden">
+                <div class="relative z-10 max-w-3xl">
+                    <span class="inline-flex items-center bg-teal-500 bg-opacity-30 border border-teal-300 border-opacity-40 rounded-full px-4 py-1 text-sm font-semibold text-teal-100 mb-3">
+                        <i data-lucide="info" class="w-4 h-4 mr-1.5"></i> 올바른 투석 이해하기
+                    </span>
+                    <h2 class="text-2xl sm:text-4xl font-extrabold leading-tight mb-4">
+                        신장 투석, 건강한 삶을 지켜주는 든든한 치료입니다.
+                    </h2>
+                    <p class="text-slate-100 text-base sm:text-lg leading-relaxed mb-6">
+                        콩팥(신장)이 제 기능을 하기 어려울 때 체내 노폐물과 남는 수분을 안전하게 걸러주는 치료입니다. 
+                        원리를 잘 이해하고 올바른 음식 관리를 병행하면 활기찬 일상생활을 충분히 이어가실 수 있습니다.
+                    </p>
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="switchPage('process')" class="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-6 py-3.5 rounded-xl shadow-md transition flex items-center text-base">
+                            <i data-lucide="play-circle" class="w-5 h-5 mr-2"></i> 투석 과정 살펴보기
+                        </button>
+                        <button onclick="switchPage('food')" class="bg-white hover:bg-slate-100 text-teal-800 font-bold px-6 py-3.5 rounded-xl shadow-md transition flex items-center text-base">
+                            <i data-lucide="search" class="w-5 h-5 mr-2 text-teal-600"></i> 음식 정보 검색하기
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Explanation Box -->
+            <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+                <h3 class="text-xl sm:text-2xl font-bold text-slate-800 mb-4 flex items-center border-b pb-3">
+                    <i data-lucide="heart-pulse" class="w-7 h-7 text-teal-600 mr-3"></i>
+                    신장 투석이란 무엇인가요?
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-base text-slate-700 leading-relaxed">
+                    <div class="bg-teal-50/70 p-5 rounded-2xl border border-teal-100">
+                        <h4 class="font-bold text-lg text-teal-800 mb-2 flex items-center">
+                            <i data-lucide="filter" class="w-5 h-5 text-teal-600 mr-2"></i> 신장의 정화 기능을 대신합니다
+                        </h4>
+                        <p>
+                            신장은 매일 피속의 노폐물을 걸러 소변으로 배출하는 역할을 합니다. 신장 기능이 떨어지면 노폐물과 물이 몸에 남아 부종이나 요독 증상이 생기는데, 투석 치료는 인공적으로 피를 걸러서 깨끗하게 유지해 줍니다.
+                        </p>
+                    </div>
+                    <div class="bg-blue-50/70 p-5 rounded-2xl border border-blue-100">
+                        <h4 class="font-bold text-lg text-medicalBlue-800 mb-2 flex items-center">
+                            <i data-lucide="shield-check" class="w-5 h-5 text-medicalBlue-600 mr-2"></i> 건강 유지의 체계적인 시작
+                        </h4>
+                        <p>
+                            투석은 병원에서 정기적으로 받는 혈액투석과 집이나 직장에서 직접 시행하는 복막투석으로 분류됩니다. 주치의 가이드에 맞춘 올바른 수칙과 식단 관리를 통해 신체 상태를 훌륭하게 유지할 수 있습니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Benefits Cards -->
+            <div>
+                <h3 class="text-xl sm:text-2xl font-bold text-slate-800 mb-5 flex items-center">
+                    <i data-lucide="star" class="w-6 h-6 text-amber-500 mr-2"></i>
+                    투석 치료의 핵심 장점
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-teal-400 transition">
+                        <div class="w-12 h-12 bg-teal-100 text-teal-700 rounded-xl flex items-center justify-center mb-4">
+                            <i data-lucide="trash-2" class="w-6 h-6"></i>
+                        </div>
+                        <h4 class="font-bold text-lg text-slate-800 mb-2">체내 노폐물 원활한 제거</h4>
+                        <p class="text-sm text-slate-600 leading-relaxed">피속 요독을 제거하여 메스꺼움, 피로감, 어지럼증을 줄여줍니다.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-teal-400 transition">
+                        <div class="w-12 h-12 bg-blue-100 text-medicalBlue-700 rounded-xl flex items-center justify-center mb-4">
+                            <i data-lucide="droplet" class="w-6 h-6"></i>
+                        </div>
+                        <h4 class="font-bold text-lg text-slate-800 mb-2">수분 및 부종 완화</h4>
+                        <p class="text-sm text-slate-600 leading-relaxed">불필요하게 축적되는 몸속 수분을 배출하여 손발 부종과 숨참 현상을 줄입니다.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-teal-400 transition">
+                        <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center mb-4">
+                            <i data-lucide="gauge" class="w-6 h-6"></i>
+                        </div>
+                        <h4 class="font-bold text-lg text-slate-800 mb-2">혈압 및 전해질 조절</h4>
+                        <p class="text-sm text-slate-600 leading-relaxed">체액량과 칼륨/나트륨 균형을 맞춰 고혈압 및 심혈관 합병증을 방지합니다.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-teal-400 transition">
+                        <div class="w-12 h-12 bg-amber-100 text-amber-700 rounded-xl flex items-center justify-center mb-4">
+                            <i data-lucide="smile" class="w-6 h-6"></i>
+                        </div>
+                        <h4 class="font-bold text-lg text-slate-800 mb-2">활기찬 일상 유지</h4>
+                        <p class="text-sm text-slate-600 leading-relaxed">컨디션을 회복시켜 식욕을 높이고 좋아하는 취미와 사회생활을 계속할 수 있습니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. DIALYSIS PROCESS PAGE -->
+        <section id="page-process" class="hidden space-y-6">
+            <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-slate-800 mb-2">투석 종류별 진행 순서</h2>
+                    <p class="text-slate-600">혈액투석과 복막투석 중 원하시는 탭을 눌러 단계별 과정을 확인하세요.</p>
+                </div>
+
+                <!-- Dialysis Tabs -->
+                <div class="flex border-b border-slate-200 mb-6 gap-2">
+                    <button onclick="switchDialysisType('hemo')" id="tab-hemo" class="py-3 px-6 text-base sm:text-lg font-bold border-b-4 border-teal-600 text-teal-700 bg-teal-50 rounded-t-xl flex items-center">
+                        <i data-lucide="building-2" class="w-5 h-5 mr-2"></i>혈액투석 (병원 방문)
+                    </button>
+                    <button onclick="switchDialysisType('peri')" id="tab-peri" class="py-3 px-6 text-base sm:text-lg font-bold border-b-4 border-transparent text-slate-500 hover:text-slate-800 rounded-t-xl flex items-center">
+                        <i data-lucide="home" class="w-5 h-5 mr-2"></i>복막투석 (자택 관리)
+                    </button>
+                </div>
+
+                <!-- Hemodialysis Steps -->
+                <div id="content-hemo" class="space-y-6">
+                    <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl text-medicalBlue-900 text-sm flex items-start">
+                        <i data-lucide="info" class="w-5 h-5 text-medicalBlue-600 mr-2 flex-shrink-0 mt-0.5"></i>
+                        <span><strong>혈액투석이란?</strong> 주 3회 병원 투석실을 방문하여 인공신장기로 혈액 노폐물을 걸러내는 방식입니다. (1회 약 4시간 소요)</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-white p-5 rounded-2xl border-2 border-teal-500 shadow-sm">
+                            <span class="inline-block bg-teal-600 text-white text-xs font-bold px-3 py-1 rounded-full mb-3">1단계</span>
+                            <h4 class="font-bold text-lg text-slate-800 mb-2">준비 및 체중 측정</h4>
+                            <p class="text-sm text-slate-600">투석 전 체중과 혈압을 측정하여 오늘 뽑아낼 수분량을 계산하고 투석 부위를 소독합니다.</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl border-2 border-teal-500 shadow-sm">
+                            <span class="inline-block bg-teal-600 text-white text-xs font-bold px-3 py-1 rounded-full mb-3">2단계</span>
+                            <h4 class="font-bold text-lg text-slate-800 mb-2">혈관 천자 (연결)</h4>
+                            <p class="text-sm text-slate-600">동정맥루 혈관에 주사바늘을 연결하여 피가 인공신장기 필터로 원활히 이동하게 합니다.</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl border-2 border-teal-500 shadow-sm">
+                            <span class="inline-block bg-teal-600 text-white text-xs font-bold px-3 py-1 rounded-full mb-3">3단계</span>
+                            <h4 class="font-bold text-lg text-slate-800 mb-2">여과 및 순환 (4시간)</h4>
+                            <p class="text-sm text-slate-600">투석막을 통과하면서 노폐물과 불필요한 물이 깨끗이 걸러진 후 다시 몸으로 안전하게 들어옵니다.</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl border-2 border-teal-500 shadow-sm">
+                            <span class="inline-block bg-teal-600 text-white text-xs font-bold px-3 py-1 rounded-full mb-3">4단계</span>
+                            <h4 class="font-bold text-lg text-slate-800 mb-2">지혈 및 휴식</h4>
+                            <p class="text-sm text-slate-600">투석이 완료되면 바늘을 빼고 지혈대로 충분히 지혈한 후, 혈압을 다시 측정하고 휴식을 취합니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Peritoneal Dialysis Steps -->
+                <div id="content-peri" class="hidden space-y-6">
+                    <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl text-amber-900 text-sm flex items-start">
+                        <i data-lucide="info" class="w-5 h-5 text-amber-600 mr-2 flex-shrink-0 mt-0.5"></i>
+                        <span><strong>복막투석이란?</strong> 뱃속 복막으로 투석액을 넣어 스스로 노폐물을 걸러내는 방식입니다. 매일 가정이나 직장에서 진행합니다.</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-white p-5 rounded-2xl border-2 border-amber-500 shadow-sm">
+                            <span class="inline-block bg-amber-600 text-white text-xs font-bold px-3 py-1 rounded-full mb-3">1단계</span>
+                            <h4 class="font-bold text-lg text-slate-800 mb-2">새 투석액 주입</h4>
+                            <p class="text-sm text-slate-600">손을 깨끗이 씻은 후 따뜻하게 데운 투석액을 뱃속 복강 안으로 약 10분간 주입합니다.</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl border-2 border-amber-500 shadow-sm">
+                            <span class="inline-block bg-amber-600 text-white text-xs font-bold px-3 py-1 rounded-full mb-3">2단계</span>
+                            <h4 class="font-bold text-lg text-slate-800 mb-2">저류 (체류 시간)</h4>
+                            <p class="text-sm text-slate-600">투석액이 노폐물과 수분을 흡수하도록 4~6시간 동안 뱃속에 넣은 상태로 일상생활을 합니다.</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl border-2 border-amber-500 shadow-sm">
+                            <span class="inline-block bg-amber-600 text-white text-xs font-bold px-3 py-1 rounded-full mb-3">3단계</span>
+                            <h4 class="font-bold text-lg text-slate-800 mb-2">배액 (노폐물 배출)</h4>
+                            <p class="text-sm text-slate-600">노폐물이 찬 투석액을 배액 주머니로 약 20분 동안 천천히 빼냅니다.</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl border-2 border-amber-500 shadow-sm">
+                            <span class="inline-block bg-amber-600 text-white text-xs font-bold px-3 py-1 rounded-full mb-3">4단계</span>
+                            <h4 class="font-bold text-lg text-slate-800 mb-2">투석액 교환 반복</h4>
+                            <p class="text-sm text-slate-600">배액 후 다시 새 투석액을 주입하며 보통 하루 4회 주기로 교환을 시행합니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. FOOD NUTRITION & SEARCH PAGE -->
+        <section id="page-food" class="hidden space-y-8">
+            <!-- Nutrition Rules -->
+            <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+                <h2 class="text-2xl font-bold text-slate-800 mb-2">투석 환자를 위한 4가지 식사 핵심 수칙</h2>
+                <p class="text-slate-600 mb-6">나트륨, 칼륨, 인, 수분 4가지를 올바르게 조절해 주세요.</p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-red-50 p-4 rounded-2xl border border-red-200">
+                        <div class="flex items-center space-x-2 text-red-700 font-bold text-lg mb-2">
+                            <i data-lucide="shield-alert" class="w-5 h-5"></i>
+                            <span>1. 나트륨(소금) 줄이기</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">소금은 갈증과 부종, 고혈압을 일으킵니다. 국물은 될 수 있으면 드시지 마세요.</p>
+                    </div>
+                    <div class="bg-amber-50 p-4 rounded-2xl border border-amber-200">
+                        <div class="flex items-center space-x-2 text-amber-700 font-bold text-lg mb-2">
+                            <i data-lucide="apple" class="w-5 h-5"></i>
+                            <span>2. 칼륨(포타슘) 조절</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">칼륨이 높으면 심장에 무리가 옵니다. 채소는 얇게 썰어 데쳐 드세요.</p>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-2xl border border-purple-200">
+                        <div class="flex items-center space-x-2 text-purple-700 font-bold text-lg mb-2">
+                            <i data-lucide="bone" class="w-5 h-5"></i>
+                            <span>3. 인(Phosphorus) 제한</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">인이 많으면 뼈가 약해지고 가려움증이 발생합니다. 가공식품을 피하세요.</p>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-2xl border border-blue-200">
+                        <div class="flex items-center space-x-2 text-medicalBlue-700 font-bold text-lg mb-2">
+                            <i data-lucide="droplet" class="w-5 h-5"></i>
+                            <span>4. 적정 수분 유지</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">몸이 붓지 않도록 하루 허용 수분량을 정해 지켜주세요.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Food Search Section -->
+            <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-800">음식 영양 및 주의도 검색기</h3>
+                        <p class="text-sm text-slate-500">음식을 검색하거나 카테고리별 안전/주의/제한 여부를 확인하세요.</p>
+                    </div>
+
+                    <!-- Search Box -->
+                    <div class="relative w-full md:w-80">
+                        <input type="text" id="food-search-input" onkeyup="filterFoods()" placeholder="음식 이름 검색 (예: 바나나, 된장찌개)" 
+                            class="w-full pl-10 pr-4 py-3 border-2 border-teal-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-400 font-medium text-base">
+                        <i data-lucide="search" class="w-5 h-5 absolute left-3 top-3.5 text-teal-600"></i>
+                    </div>
+                </div>
+
+                <!-- Category Filters -->
+                <div class="flex flex-wrap gap-2 mb-6">
+                    <button onclick="setCategoryFilter('all')" id="cat-all" class="px-4 py-2 rounded-xl text-sm font-bold bg-teal-700 text-white transition">전체보기</button>
+                    <button onclick="setCategoryFilter('곡류')" id="cat-곡류" class="px-4 py-2 rounded-xl text-sm font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">곡류/밥</button>
+                    <button onclick="setCategoryFilter('채소과일')" id="cat-채소과일" class="px-4 py-2 rounded-xl text-sm font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">채소/과일</button>
+                    <button onclick="setCategoryFilter('단백질')" id="cat-단백질" class="px-4 py-2 rounded-xl text-sm font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">고기/생선/계란</button>
+                    <button onclick="setCategoryFilter('국찌개')" id="cat-국찌개" class="px-4 py-2 rounded-xl text-sm font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">국/찌개류</button>
+                </div>
+
+                <!-- Food Cards Grid -->
+                <div id="food-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+
+                <div id="no-food-results" class="hidden text-center py-10 text-slate-500">
+                    <p class="text-lg">검색 결과가 없습니다. 다른 검색어를 입력해 보세요.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. CHECKLIST PAGE -->
+        <section id="page-checklist" class="hidden space-y-6">
+            <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 max-w-3xl mx-auto">
+                <div class="text-center mb-8">
+                    <span class="bg-teal-100 text-teal-800 text-xs font-bold px-3 py-1 rounded-full uppercase">자가 점검</span>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-slate-800 mt-2">오늘의 식습관 체크리스트</h2>
+                    <p class="text-slate-600 mt-1">오늘 실천한 항목을 클릭하여 점검해보세요.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <label class="flex items-start p-4 bg-slate-50 rounded-2xl border border-slate-200 cursor-pointer hover:bg-teal-50/50 transition">
+                        <input type="checkbox" onchange="updateChecklistProgress()" class="chk-item w-6 h-6 text-teal-600 rounded border-slate-300 mt-0.5">
+                        <div class="ml-4">
+                            <span class="font-bold text-base text-slate-800 block">국물은 될 수 있으면 남기고 건더기 위주로 드셨나요?</span>
+                            <span class="text-xs sm:text-sm text-slate-500">국물에는 나트륨과 칼륨이 많아 피하는 것이 좋습니다.</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start p-4 bg-slate-50 rounded-2xl border border-slate-200 cursor-pointer hover:bg-teal-50/50 transition">
+                        <input type="checkbox" onchange="updateChecklistProgress()" class="chk-item w-6 h-6 text-teal-600 rounded border-slate-300 mt-0.5">
+                        <div class="ml-4">
+                            <span class="font-bold text-base text-slate-800 block">채소는 데치거나 물에 우려낸 뒤 드셨나요?</span>
+                            <span class="text-xs sm:text-sm text-slate-500">데친 후 조리하면 칼륨 수치를 절반 이상 줄입니다.</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start p-4 bg-slate-50 rounded-2xl border border-slate-200 cursor-pointer hover:bg-teal-50/50 transition">
+                        <input type="checkbox" onchange="updateChecklistProgress()" class="chk-item w-6 h-6 text-teal-600 rounded border-slate-300 mt-0.5">
+                        <div class="ml-4">
+                            <span class="font-bold text-base text-slate-800 block">가공식품(햄, 소시지, 라면)을 피하셨나요?</span>
+                            <span class="text-xs sm:text-sm text-slate-500">가공식품 속 인산염과 나트륨은 신장에 부담을 줍니다.</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start p-4 bg-slate-50 rounded-2xl border border-slate-200 cursor-pointer hover:bg-teal-50/50 transition">
+                        <input type="checkbox" onchange="updateChecklistProgress()" class="chk-item w-6 h-6 text-teal-600 rounded border-slate-300 mt-0.5">
+                        <div class="ml-4">
+                            <span class="font-bold text-base text-slate-800 block">정해진 하루 수분 목표량을 지키셨나요?</span>
+                            <span class="text-xs sm:text-sm text-slate-500">수분 과다 섭취는 체중 급증과 호흡 곤란을 부릅니다.</span>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="mt-8 bg-teal-50 border-2 border-teal-200 rounded-2xl p-6 text-center">
+                    <div class="text-sm font-bold text-teal-800 mb-1">실천 달성도</div>
+                    <div id="checklist-score" class="text-3xl font-extrabold text-teal-700 mb-3">0 / 4 개 완료</div>
+                    <div id="checklist-message" class="text-slate-700 font-medium text-base">
+                        매일매일 건강한 습관을 만들어가세요!
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Food Detail Modal -->
+    <div id="food-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl relative space-y-4">
+            <button onclick="closeFoodModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-xl font-bold p-2">✕</button>
+            <div id="modal-badge-container"></div>
+            <h3 id="modal-title" class="text-2xl font-bold text-slate-800"></h3>
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2 text-sm">
+                <div><strong class="text-slate-700">권장 기준:</strong> <span id="modal-safety"></span></div>
+                <div><strong class="text-slate-700">영양 특징:</strong> <span id="modal-nutrition"></span></div>
+            </div>
+            <div>
+                <strong class="text-slate-800 font-bold block mb-1">👨‍⚕️ 섭취 및 조리 가이드:</strong>
+                <p id="modal-advice" class="text-slate-600 text-sm leading-relaxed bg-amber-50 border border-amber-200 p-3.5 rounded-xl"></p>
+            </div>
+            <button onclick="closeFoodModal()" class="w-full bg-teal-700 hover:bg-teal-800 text-white font-bold py-3.5 rounded-xl transition text-base">
+                확인했습니다
+            </button>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        const foodDatabase = [
+            { id: 1, name: '흰쌀밥 (백미)', category: '곡류', status: 'safe', safetyText: '안전 (권장)', nutrition: '낮은 인 및 칼륨', advice: '투석 환자에게 가장 안전한 주식입니다. 잡곡 대신 흰쌀밥 위주로 드세요.' },
+            { id: 2, name: '현미 / 잡곡밥', category: '곡류', status: 'caution', safetyText: '주의 (양 조절)', nutrition: '높은 인 및 칼륨', advice: '인과 칼륨 함량이 높아 수치가 높아질 수 있으므로 양을 대폭 줄여야 합니다.' },
+            { id: 3, name: '바나나', category: '채소과일', status: 'caution', safetyText: '주의 (제한)', nutrition: '고칼륨 대표 식품', advice: '칼륨 수치를 급격히 올릴 수 있습니다. 반 개 이하로 매우 제한적으로 드세요.' },
+            { id: 4, name: '사과', category: '채소과일', status: 'safe', safetyText: '안전 (적당량)', nutrition: '비교적 낮은 칼륨', advice: '투석 환자에게 안전한 대표 과일입니다. 하루 반 개 정도 껍질을 벗겨 드세요.' },
+            { id: 5, name: '시금치', category: '채소과일', status: 'caution', safetyText: '주의 (데쳐서 섭취)', nutrition: '높은 칼륨', advice: '생으로 드시지 마시고 데친 후 물을 충분히 짜서 조리하세요.' },
+            { id: 6, name: '달걀 흰자', category: '단백질', status: 'safe', safetyText: '안전 (권장)', nutrition: '양질의 단백질', advice: '투석 시 손실되는 단백질 보충에 최고입니다. 노른자는 인이 많으니 흰자 위주로 드세요.' },
+            { id: 7, name: '소고기 살코기', category: '단백질', status: 'safe', safetyText: '안전 (적당량)', nutrition: '필수 단백질', advice: '기름기가 적은 살코기 위주로 섭취하여 단백질을 보충하세요.' },
+            { id: 8, name: '햄 / 소시지', category: '단백질', status: 'restricted', safetyText: '제한 (피하기)', nutrition: '초고나트륨 및 인산염', advice: '보존제와 염분이 대량 함유되어 신장에 큰 부담을 줍니다.' },
+            { id: 9, name: '된장찌개 / 김치찌개', category: '국찌개', status: 'restricted', safetyText: '제한 (국물 피하기)', nutrition: '초고나트륨', advice: '국물 섭취는 절대 금물입니다. 드시더라도 건더기 위주로 조금만 드세요.' },
+            { id: 10, name: '맑은 콩나물국', category: '국찌개', status: 'caution', safetyText: '주의 (건더기만)', nutrition: '나트륨 유의', advice: '싱겁게 끓여 국물은 남기고 콩나물 건더기만 드시는 것이 좋습니다.' }
+        ];
+
+        let currentCategory = 'all';
+
+        function switchPage(pageId) {
+            ['home', 'process', 'food', 'checklist'].forEach(p => {
+                const pageEl = document.getElementById(`page-${p}`);
+                const navBtn = document.getElementById(`nav-${p}`);
+                if (p === pageId) {
+                    pageEl.classList.remove('hidden');
+                    navBtn.classList.add('active-tab', 'border-amber-400');
+                } else {
+                    pageEl.classList.add('hidden');
+                    navBtn.classList.remove('active-tab', 'border-amber-400');
+                }
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function setFontSize(size) {
+            document.body.classList.remove('font-normal-size', 'font-large-size', 'font-xlarge-size');
+            ['normal', 'large', 'xlarge'].forEach(s => {
+                document.getElementById(`btn-font-${s}`).className = "px-3 py-1.5 text-xs font-bold rounded-lg text-slate-700 hover:bg-slate-200 transition";
+            });
+            document.body.classList.add(`font-${size}-size`);
+            document.getElementById(`btn-font-${size}`).className = "px-3 py-1.5 text-xs font-bold rounded-lg bg-teal-700 text-white shadow-sm transition";
+        }
+
+        function switchDialysisType(type) {
+            if (type === 'hemo') {
+                document.getElementById('tab-hemo').className = "py-3 px-6 text-lg font-bold border-b-4 border-teal-600 text-teal-700 bg-teal-50 rounded-t-xl flex items-center";
+                document.getElementById('tab-peri').className = "py-3 px-6 text-lg font-bold border-b-4 border-transparent text-slate-500 hover:text-slate-800 rounded-t-xl flex items-center";
+                document.getElementById('content-hemo').classList.remove('hidden');
+                document.getElementById('content-peri').classList.add('hidden');
+            } else {
+                document.getElementById('tab-peri').className = "py-3 px-6 text-lg font-bold border-b-4 border-amber-600 text-amber-700 bg-amber-50 rounded-t-xl flex items-center";
+                document.getElementById('tab-hemo').className = "py-3 px-6 text-lg font-bold border-b-4 border-transparent text-slate-500 hover:text-slate-800 rounded-t-xl flex items-center";
+                document.getElementById('content-peri').classList.remove('hidden');
+                document.getElementById('content-hemo').classList.add('hidden');
+            }
+        }
+
+        function renderFoods(foods) {
+            const grid = document.getElementById('food-grid');
+            grid.innerHTML = '';
+
+            if (foods.length === 0) {
+                document.getElementById('no-food-results').classList.remove('hidden');
+                return;
+            }
+            document.getElementById('no-food-results').classList.add('hidden');
+
+            foods.forEach(food => {
+                let badgeBg = 'bg-emerald-100 text-emerald-800 border-emerald-300';
+                if (food.status === 'caution') badgeBg = 'bg-amber-100 text-amber-800 border-amber-300';
+                if (food.status === 'restricted') badgeBg = 'bg-red-100 text-red-800 border-red-300';
+
+                const card = document.createElement('div');
+                card.className = "bg-white p-5 rounded-2xl border border-slate-200 shadow-sm food-card cursor-pointer flex flex-col justify-between";
+                card.onclick = () => openFoodModal(food);
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold px-2.5 py-1 rounded-md bg-slate-100 text-slate-600">${food.category}</span>
+                            <span class="text-xs font-bold px-3 py-1 rounded-full border ${badgeBg}">${food.safetyText}</span>
+                        </div>
+                        <h4 class="font-bold text-xl text-slate-800 mb-2">${food.name}</h4>
+                        <p class="text-xs text-slate-500">${food.advice}</p>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterFoods() {
+            const query = document.getElementById('food-search-input').value.trim().toLowerCase();
+            const filtered = foodDatabase.filter(item => {
+                const matchCat = (currentCategory === 'all') || (item.category === currentCategory);
+                const matchQuery = item.name.toLowerCase().includes(query);
+                return matchCat && matchQuery;
+            });
+            renderFoods(filtered);
+        }
+
+        function setCategoryFilter(cat) {
+            currentCategory = cat;
+            ['all', '곡류', '채소과일', '단백질', '국찌개'].forEach(c => {
+                const btn = document.getElementById(`cat-${c}`);
+                btn.className = c === cat 
+                    ? "px-4 py-2 rounded-xl text-sm font-bold bg-teal-700 text-white transition"
+                    : "px-4 py-2 rounded-xl text-sm font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition";
+            });
+            filterFoods();
+        }
+
+        function openFoodModal(food) {
+            document.getElementById('modal-title').innerText = food.name;
+            document.getElementById('modal-safety').innerText = food.safetyText;
+            document.getElementById('modal-nutrition').innerText = food.nutrition;
+            document.getElementById('modal-advice').innerText = food.advice;
+            document.getElementById('food-modal').classList.remove('hidden');
+        }
+
+        function closeFoodModal() {
+            document.getElementById('food-modal').classList.add('hidden');
+        }
+
+        function updateChecklistProgress() {
+            const chks = document.querySelectorAll('.chk-item');
+            let count = 0;
+            chks.forEach(c => { if(c.checked) count++; });
+            document.getElementById('checklist-score').innerText = `${count} / ${chks.length} 개 완료`;
+        }
+
+        window.onload = function() {
+            lucide.createIcons();
+            renderFoods(foodDatabase);
+        };
+    </script>
+</body>
+</html>
